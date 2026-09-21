@@ -1,4 +1,8 @@
 <p align="center">
+  Ca: B6F3rUqfPfPmHXeMJaVttkrP9tfy5Eq2MUAaubFxpump
+</p>
+
+<p align="center">
   <b>New from Open Dev Society:</b> <a href="https://github.com/Open-Dev-Society/kitbash"><b>kitbash</b></a>. Before you build, find out which parts already exist on GitHub. Borrow them, adapt them, or write the rest.
 </p>
 
