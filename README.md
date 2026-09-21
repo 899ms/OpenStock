@@ -128,7 +128,7 @@ Language composition
     - Collects country, investment goals, risk tolerance, preferred industry
 - Email & automation
     - AI-personalized welcome email (Gemini via Inngest)
-    - Daily news summary emails (cron) personalized using user watchlists
+    - Weekly news summary email (cron) sent as a Kit broadcast
 - Polished UI
     - shadcn/ui components, Radix primitives, Tailwind v4 design tokens
     - Dark theme by default
@@ -394,7 +394,7 @@ public/assets/images/   # logos and screenshots
 - Inngest
     - Workflows:
         - `app/user.created` → AI-personalized Welcome Email
-        - Cron `0 12 * * *` → Daily News Summary per user
+        - Cron `0 9 * * 1` → Weekly News Summary (every Monday at 9 AM, Kit broadcast)
     - Local dev: `npx inngest-cli@latest dev`.
 
 - Email (Nodemailer)
