@@ -45,6 +45,13 @@ const createAuth = (database: MongoDb) => betterAuth({
         session: {
             cookieCache: { enabled: true, maxAge: 5 * 60 },
         },
+        // No account linking. Sign-up doesn't verify emails, so linking a Google/GitHub identity to an
+        // existing account with the same email would let someone pre-register a victim's address and
+        // later capture their social sign-in. In Better Auth 1.3 this switch also blocks explicit
+        // linking; revisit (email verification or a newer Better Auth) when social sign-in ships.
+        account: {
+            accountLinking: { enabled: false },
+        },
         // Providers stay disabled until their env vars are set
         socialProviders: {
             google: {

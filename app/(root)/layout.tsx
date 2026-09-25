@@ -18,7 +18,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 
     const [initialStocks, watchlist] = await Promise.all([
         searchStocks(),
-        getUserWatchlist(user.id),
+        getUserWatchlist(),
     ]);
 
     return (

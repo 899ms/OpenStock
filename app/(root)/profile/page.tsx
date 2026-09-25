@@ -4,18 +4,17 @@ import { Bell, KeyRound, ShieldCheck, Star } from "lucide-react";
 import Panel from "@/components/Panel";
 import ProfileForm from "@/components/profile/ProfileForm";
 import PasswordForm from "@/components/profile/PasswordForm";
-import ConnectProviderButton from "@/components/profile/ConnectProviderButton";
 import { auth, getSession } from "@/lib/better-auth/auth";
 import { getUserWatchlist } from "@/lib/actions/watchlist.actions";
 import { getUserAlerts } from "@/lib/actions/alert.actions";
 
 export const metadata = { title: 'Profile | OpenStock' };
 
-const PROVIDERS = [
-    { id: 'credential', label: 'Email and password', configured: true },
-    { id: 'google', label: 'Google', configured: !!process.env.GOOGLE_CLIENT_ID },
-    { id: 'github', label: 'GitHub', configured: !!process.env.GITHUB_CLIENT_ID },
-] as const;
+const METHOD_LABELS: Record<string, string> = {
+    credential: 'Email and password',
+    google: 'Google',
+    github: 'GitHub',
+};
 
 export default async function ProfilePage() {
     const session = await getSession();
@@ -24,8 +23,8 @@ export default async function ProfilePage() {
 
     const [accounts, watchlist, alerts] = await Promise.all([
         auth.api.listUserAccounts({ headers: await headers() }).catch(() => []),
-        getUserWatchlist(user.id),
-        getUserAlerts(user.id),
+        getUserWatchlist(),
+        getUserAlerts(),
     ]);
     const linked = new Set(accounts.map((a: { providerId: string }) => a.providerId));
     const activeAlerts = alerts.filter((a: { triggered?: boolean }) => !a.triggered).length;
@@ -75,17 +74,11 @@ export default async function ProfilePage() {
                 <div className="flex min-w-0 flex-col gap-3">
                     <Panel title="Sign-in methods" sub="Ways you can get into this account">
                         <ul className="row-list">
-                            {PROVIDERS.filter((p) => p.configured || linked.has(p.id)).map((p) => (
-                                <li key={p.id} className="flex items-center gap-3 px-3.5 py-3">
+                            {[...linked].map((id) => (
+                                <li key={id} className="flex items-center gap-3 px-3.5 py-3">
                                     <span className="bento-ico"><KeyRound /></span>
-                                    <span className="flex-1 font-semibold">{p.label}</span>
-                                    {linked.has(p.id) ? (
-                                        <span className="pill is-up">Connected</span>
-                                    ) : p.id === 'credential' ? (
-                                        <span className="pill">Not set</span>
-                                    ) : (
-                                        <ConnectProviderButton provider={p.id} />
-                                    )}
+                                    <span className="flex-1 font-semibold">{METHOD_LABELS[id] ?? id}</span>
+                                    <span className="pill is-up">Connected</span>
                                 </li>
                             ))}
                         </ul>

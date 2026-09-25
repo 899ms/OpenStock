@@ -1,12 +1,6 @@
 import { transporter } from "@/lib/nodemailer";
+import { escapeHtml } from "@/lib/utils";
 
-const escapeHtml = (value: string) =>
-    value
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
 
 // Better Auth hands us an already-encoded URL (callbackURL=http%3A%2F%2F...).
 // encodeURI would turn those % into %25 and the link fails with INVALID_CALLBACKURL,
@@ -18,7 +12,7 @@ export const sendPasswordResetEmail = async (
     { email, name, resetUrl }: { email: string; name?: string | null; resetUrl: string }
 ) => {
     try {
-        if (!process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASSWORD) {
+        if (!transporter || !process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASSWORD) {
             throw new Error('Email credentials not configured');
         }
 

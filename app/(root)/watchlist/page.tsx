@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import { Plus } from 'lucide-react';
-import { requireUserId } from '@/lib/better-auth/auth';
 import { getUserWatchlist } from '@/lib/actions/watchlist.actions';
 import { getUserAlerts } from '@/lib/actions/alert.actions';
 import { getNews, getWatchlistData } from '@/lib/actions/finnhub.actions';
@@ -33,8 +32,7 @@ async function News({ symbols }: { symbols: string[] }) {
 
 // DB reads render first; everything from Finnhub streams in behind skeletons.
 export default async function WatchlistPage() {
-    const userId = await requireUserId();
-    const [items, alerts] = await Promise.all([getUserWatchlist(userId), getUserAlerts(userId)]);
+    const [items, alerts] = await Promise.all([getUserWatchlist(), getUserAlerts()]);
     const symbols: string[] = items.map((item: { symbol: string }) => item.symbol);
     const activeAlerts = alerts.filter((a: { triggered?: boolean }) => !a.triggered).length;
 

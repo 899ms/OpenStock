@@ -2,7 +2,6 @@ import { Bell, CalendarClock, Gauge, Landmark, MoveVertical } from "lucide-react
 import WatchlistButton from "@/components/WatchlistButton";
 import CreateAlertModal from "@/components/watchlist/CreateAlertModal";
 import StockLivePrice from "@/components/stocks/StockLivePrice";
-import { requireUserId } from "@/lib/better-auth/auth";
 import { isStockInWatchlist } from "@/lib/actions/watchlist.actions";
 import { getCompanyProfile, getLiveQuotes } from "@/lib/actions/finnhub.actions";
 import { formatNumber, formatPrice, formatSymbolForTradingView } from "@/lib/utils";
@@ -11,8 +10,8 @@ import { symbolInfoConfig } from "@/lib/constants";
 import TradingViewWidget from "@/components/TradingViewWidget";
 
 // Symbols Finnhub's free plan can't price (most non-US listings) use TradingView's quote panel instead.
-async function TradingViewHeader({ symbol, userId }: { symbol: string; userId: string }) {
-    const isInWatchlist = await isStockInWatchlist(userId, symbol);
+async function TradingViewHeader({ symbol }: { symbol: string }) {
+    const isInWatchlist = await isStockInWatchlist(symbol);
     const tvSymbol = formatSymbolForTradingView(symbol);
     return (
         <section className="hatch">
@@ -36,11 +35,10 @@ async function TradingViewHeader({ symbol, userId }: { symbol: string; userId: s
 }
 
 export default async function StockHeader({ symbol }: { symbol: string }) {
-    const userId = await requireUserId();
-    if (!hasFinnhubQuotes(symbol)) return <TradingViewHeader symbol={symbol} userId={userId} />;
+    if (!hasFinnhubQuotes(symbol)) return <TradingViewHeader symbol={symbol} />;
 
     const [isInWatchlist, quotes, profile] = await Promise.all([
-        isStockInWatchlist(userId, symbol),
+        isStockInWatchlist(symbol),
         getLiveQuotes([symbol]),
         getCompanyProfile(symbol),
     ]);

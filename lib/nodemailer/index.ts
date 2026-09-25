@@ -5,7 +5,7 @@ import {
     STOCK_ALERT_UPPER_EMAIL_TEMPLATE,
     STOCK_ALERT_LOWER_EMAIL_TEMPLATE,
 } from "@/lib/nodemailer/templates";
-import { formatPrice } from "@/lib/utils";
+import { escapeHtml, formatPrice } from "@/lib/utils";
 
 type EmailSendResult =
     | { status: 'skipped' }
@@ -110,18 +110,22 @@ export const sendStockAlertEmail = async (
         }
 
         const isUpper = condition === 'ABOVE';
+        // Binance pairs are quoted in USDT, everything else Finnhub prices here is USD
+        const money = (value: number) => symbol.startsWith('BINANCE:')
+            ? `${value.toLocaleString('en-US', { maximumFractionDigits: value < 1 ? 6 : 2 })} USDT`
+            : formatPrice(value);
         const htmlTemplate = (isUpper ? STOCK_ALERT_UPPER_EMAIL_TEMPLATE : STOCK_ALERT_LOWER_EMAIL_TEMPLATE)
-            .replaceAll('{{symbol}}', symbol)
+            .replaceAll('{{symbol}}', escapeHtml(symbol))
             .replaceAll('{{company}}', '') // Alerts don't store the company name
-            .replaceAll('{{currentPrice}}', formatPrice(currentPrice))
-            .replaceAll('{{targetPrice}}', formatPrice(targetPrice))
+            .replaceAll('{{currentPrice}}', money(currentPrice))
+            .replaceAll('{{targetPrice}}', money(targetPrice))
             .replaceAll('{{timestamp}}', new Date().toUTCString());
 
         const mailOptions = {
             from: `"Openstock" <${process.env.NODEMAILER_EMAIL}>`,
             to: email,
-            subject: `🔔 Price Alert: ${symbol} is ${isUpper ? 'above' : 'below'} ${formatPrice(targetPrice)}`,
-            text: `${symbol} is now ${formatPrice(currentPrice)}, ${isUpper ? 'above' : 'below'} your target of ${formatPrice(targetPrice)}.`,
+            subject: `🔔 Price Alert: ${symbol} is ${isUpper ? 'above' : 'below'} ${money(targetPrice)}`,
+            text: `${symbol} is now ${money(currentPrice)}, ${isUpper ? 'above' : 'below'} your target of ${money(targetPrice)}.`,
             html: htmlTemplate,
         };
 

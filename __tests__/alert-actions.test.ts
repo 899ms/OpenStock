@@ -54,3 +54,25 @@ describe('alert actions are scoped to the session user', () => {
         expect(create).not.toHaveBeenCalled();
     });
 });
+
+describe('createAlert validates untrusted input', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        requireUserId.mockResolvedValue('user-123');
+        create.mockImplementation(async (doc: unknown) => doc);
+    });
+
+    it('rejects symbols that could carry markup into alert emails', async () => {
+        await expect(createAlert({ symbol: '<img src=x>', targetPrice: 1, condition: 'ABOVE' })).rejects.toThrow('Invalid symbol');
+        expect(create).not.toHaveBeenCalled();
+    });
+
+    it('rejects unknown conditions', async () => {
+        await expect(createAlert({ symbol: 'AAPL', targetPrice: 1, condition: 'SIDEWAYS' as never })).rejects.toThrow('Invalid condition');
+    });
+
+    it('stores only validated fields, so callers cannot pre-trigger or extend an alert', async () => {
+        await createAlert({ symbol: ' brk.b ', targetPrice: 400, condition: 'BELOW', triggered: true, expiresAt: new Date(2100, 0) } as never);
+        expect(create).toHaveBeenCalledWith({ userId: 'user-123', symbol: 'BRK.B', targetPrice: 400, condition: 'BELOW', active: true });
+    });
+});

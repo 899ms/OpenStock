@@ -1,8 +1,7 @@
 import { inngest } from "@/lib/inngest/client";
 import { NEWS_SUMMARY_EMAIL_PROMPT, PERSONALIZED_WELCOME_EMAIL_PROMPT } from "@/lib/inngest/prompts";
 import { sendNewsSummaryEmail, sendStockAlertEmail, sendWelcomeEmail } from "@/lib/nodemailer";
-import { getAllUsersForNewsEmail } from "@/lib/actions/user.actions";
-import { getWatchlistSymbolsByEmail } from "@/lib/actions/watchlist.actions";
+import { getAllUsersForNewsEmail, getWatchlistSymbolsByEmail } from "@/lib/actions/user.actions";
 import { getNews } from "@/lib/actions/finnhub.actions";
 import { getFormattedTodayDate } from "@/lib/utils";
 import { callAIProviderWithFallback } from "@/lib/ai-provider";
@@ -281,9 +280,18 @@ export const checkStockAlerts = inngest.createFunction(
                 if (!db) throw new Error("No DB Connection");
 
                 for (const { alert, currentPrice } of triggeredAlerts) {
+                    // Claim the alert atomically before emailing. Inngest's concurrency limits steps, not
+                    // whole runs, so two overlapping runs can hold the same alert; only one wins this update.
+                    const claimed = await Alert.findOneAndUpdate(
+                        { _id: alert._id, active: true, triggered: false },
+                        { $set: { triggered: true, active: false } },
+                    );
+                    if (!claimed) continue;
+                    const release = () => Alert.findByIdAndUpdate(alert._id, { triggered: false, active: true }).catch(() => {});
+
                     console.log(`🚀 ALERT FIRED: ${alert.symbol} is ${currentPrice} (${alert.condition} ${alert.targetPrice})`);
 
-                    // Per-alert try/catch: a failure leaves the alert active so the next 5-min run retries it,
+                    // Per-alert try/catch: a failure releases the claim so the next 5-min run retries it,
                     // and never throws the step (a step retry would re-email alerts already sent in this loop).
                     try {
                         // Better Auth users may be keyed by `id` or `_id` (see getWatchlistSymbolsByEmail)
@@ -301,14 +309,13 @@ export const checkStockAlerts = inngest.createFunction(
                                 targetPrice: alert.targetPrice,
                                 condition: alert.condition,
                             });
-                            // Email not configured: keep the alert active so it fires once email works
-                            if (result.status === 'skipped') continue;
+                            // Email not configured: release so the alert fires once email works
+                            if (result.status === 'skipped') await release();
                         } else {
                             console.warn(`⚠️ No email for user ${alert.userId}; closing alert ${alert._id} without notifying`);
                         }
-
-                        await Alert.findByIdAndUpdate(alert._id, { triggered: true, active: false });
                     } catch (error) {
+                        await release();
                         console.error(`❌ Failed to process alert ${alert._id} (${alert.symbol}); will retry next run`, error);
                     }
                 }

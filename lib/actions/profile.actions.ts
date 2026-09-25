@@ -57,16 +57,3 @@ export async function changePassword({ currentPassword, newPassword }: { current
         return { success: false, error: 'Current password is incorrect, or the new one is too short.' };
     }
 }
-
-export async function connectProvider(provider: 'google' | 'github') {
-    try {
-        const { url } = await auth.api.linkSocialAccount({
-            headers: await headers(),
-            body: { provider, callbackURL: '/profile' },
-        });
-        return { success: true, url };
-    } catch (e) {
-        console.error('Account linking failed', e);
-        return { success: false, error: `${provider === 'google' ? 'Google' : 'GitHub'} isn’t available right now.` };
-    }
-}

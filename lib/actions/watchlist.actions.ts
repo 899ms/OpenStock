@@ -45,7 +45,8 @@ export async function removeFromWatchlist(symbol: string) {
     }
 }
 
-export async function getUserWatchlist(userId: string) {
+export async function getUserWatchlist() {
+    const userId = await requireUserId();
     try {
         await connectToDatabase();
         const watchlist = await Watchlist.find({ userId }).sort({ addedAt: -1 });
@@ -57,7 +58,8 @@ export async function getUserWatchlist(userId: string) {
 }
 
 // Check if a symbol is in the user's watchlist
-export async function isStockInWatchlist(userId: string, symbol: string) {
+export async function isStockInWatchlist(symbol: string) {
+    const userId = await requireUserId();
     try {
         await connectToDatabase();
         const item = await Watchlist.findOne({ userId, symbol: symbol.toUpperCase() });
@@ -65,31 +67,5 @@ export async function isStockInWatchlist(userId: string, symbol: string) {
     } catch (error) {
         console.error('Error checking watchlist status:', error);
         return false;
-    }
-}
-
-// -- Legacy Support (if needed by other components) --
-
-export async function getWatchlistSymbolsByEmail(email: string): Promise<string[]> {
-    if (!email) return [];
-
-    try {
-        const mongoose = await connectToDatabase();
-        const db = mongoose.connection.db;
-        if (!db) throw new Error('MongoDB connection not found');
-
-        // Better Auth stores users in the "user" collection
-        const user = await db.collection('user').findOne<{ _id?: unknown; id?: string; email?: string }>({ email });
-
-        if (!user) return [];
-
-        const userId = (user.id as string) || String(user._id || '');
-        if (!userId) return [];
-
-        const items = await Watchlist.find({ userId }, { symbol: 1 }).lean();
-        return items.map((i) => String(i.symbol));
-    } catch (err) {
-        console.error('getWatchlistSymbolsByEmail error:', err);
-        return [];
     }
 }

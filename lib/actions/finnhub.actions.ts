@@ -5,6 +5,7 @@ import { POPULAR_STOCKS } from '@/lib/constants';
 import { cache } from 'react';
 import { QUOTE_TTL_SECONDS } from '@/lib/market-data';
 import { hasFinnhubQuotes } from '@/lib/markets';
+import { getSession } from '@/lib/better-auth/auth';
 
 const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
 // Key pool: each free key has its own 60 req/min, so N keys = N x the quota. Rotated per request.
@@ -129,10 +130,12 @@ async function fetchJSON<T>(url: string, revalidateSeconds = 0): Promise<T> {
             return value;
         },
         (error) => {
-            // A stalling endpoint fails fast for a minute instead of costing every visitor the full timeout
-            if (!responseCache.get(url) || responseCache.get(url)!.failed) {
-                store({ value: null, freshUntil: Date.now() + FAILURE_TTL_MS, failed: true });
-            }
+            // A stalling endpoint fails fast for a minute instead of costing every visitor the full timeout.
+            // A stale value keeps being served, but its next refresh also waits out the cool-down.
+            const existing = responseCache.get(url);
+            store(existing && !existing.failed
+                ? { value: existing.value, freshUntil: Date.now() + FAILURE_TTL_MS }
+                : { value: null, freshUntil: Date.now() + FAILURE_TTL_MS, failed: true });
             throw error;
         },
     );
@@ -314,6 +317,8 @@ export const searchStocks = cache(async (query?: string): Promise<StockWithWatch
                 __exchange: exchange,
             }));
         } else {
+            // A public server action: only signed-in users may spend Finnhub quota on searches
+            if (!(await getSession())?.user) return [];
             const url = `${FINNHUB_BASE_URL}/search?q=${encodeURIComponent(trimmed)}`;
             const data = await fetchJSON<FinnhubSearchResponse>(url, 1800);
             results = Array.isArray(data?.result) ? data.result : [];
