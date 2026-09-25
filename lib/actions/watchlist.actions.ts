@@ -3,10 +3,12 @@
 import { connectToDatabase } from '@/database/mongoose';
 import { Watchlist } from '@/database/models/watchlist.model';
 import { revalidatePath } from 'next/cache';
+import { requireUserId } from '@/lib/better-auth/auth';
 
 // -- CRUD Operations --
 
-export async function addToWatchlist(userId: string, symbol: string, company: string) {
+export async function addToWatchlist(symbol: string, company: string) {
+    const userId = await requireUserId();
     try {
         await connectToDatabase();
 
@@ -22,7 +24,7 @@ export async function addToWatchlist(userId: string, symbol: string, company: st
             { upsert: true, new: true }
         );
 
-        revalidatePath('/watchlist');
+        revalidatePath('/', 'layout'); // sidebar lists the watchlist on every page
         return JSON.parse(JSON.stringify(newItem));
     } catch (error) {
         console.error('Error adding to watchlist:', error);
@@ -30,12 +32,12 @@ export async function addToWatchlist(userId: string, symbol: string, company: st
     }
 }
 
-export async function removeFromWatchlist(userId: string, symbol: string) {
+export async function removeFromWatchlist(symbol: string) {
+    const userId = await requireUserId();
     try {
         await connectToDatabase();
         await Watchlist.findOneAndDelete({ userId, symbol: symbol.toUpperCase() });
-        revalidatePath('/watchlist');
-        revalidatePath('/'); // In case it's used elsewhere
+        revalidatePath('/', 'layout'); // sidebar lists the watchlist on every page
         return { success: true };
     } catch (error) {
         console.error('Error removing from watchlist:', error);

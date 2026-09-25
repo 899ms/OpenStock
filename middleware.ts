@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionCookie } from "better-auth/cookies";
 
+const PUBLIC_PATHS = new Set(['/', '/about', '/help', '/terms', '/api-docs', '/sponsor']);
+
 export async function middleware(request: NextRequest) {
+    // The marketing site is public
+    if (PUBLIC_PATHS.has(request.nextUrl.pathname)) return NextResponse.next();
+
     const sessionCookie = getSessionCookie(request);
 
     // Check cookie presence - prevents obviously unauthorized users
