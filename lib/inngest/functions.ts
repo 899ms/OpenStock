@@ -1,6 +1,6 @@
 import { inngest } from "@/lib/inngest/client";
 import { NEWS_SUMMARY_EMAIL_PROMPT, PERSONALIZED_WELCOME_EMAIL_PROMPT } from "@/lib/inngest/prompts";
-import { sendNewsSummaryEmail, sendWelcomeEmail } from "@/lib/nodemailer";
+import { sendNewsSummaryEmail, sendStockAlertEmail, sendWelcomeEmail } from "@/lib/nodemailer";
 import { getAllUsersForNewsEmail } from "@/lib/actions/user.actions";
 import { getWatchlistSymbolsByEmail } from "@/lib/actions/watchlist.actions";
 import { getNews } from "@/lib/actions/finnhub.actions";
@@ -203,7 +203,7 @@ export const sendWeeklyNewsSummary = inngest.createFunction(
 )
 
 export const checkStockAlerts = inngest.createFunction(
-    { id: 'check-stock-alerts', triggers: [{ cron: '*/5 * * * *' }] }, // Run every 5 minutes
+    { id: 'check-stock-alerts', concurrency: 1, triggers: [{ cron: '*/5 * * * *' }] }, // Every 5 minutes; one run at a time so an alert is never emailed twice
     async ({ step }) => {
         // Step 1: Fetch active alerts
         const activeAlerts = await step.run('fetch-active-alerts', async () => {
@@ -268,20 +268,46 @@ export const checkStockAlerts = inngest.createFunction(
             }
         }
 
-        // Step 5: Process triggers
+        // Step 5: Email the alert owner, then mark triggered
         if (triggeredAlerts.length > 0) {
             await step.run('process-triggered-alerts', async () => {
                 const { connectToDatabase } = await import("@/database/mongoose");
                 const { Alert } = await import("@/database/models/alert.model");
-                // In a real app we would import 'kit' here and use kit.sendBroadcast or similar
-                // For now, we just log it as the critical logic is the detection
-                await connectToDatabase();
+                const mongoose = await connectToDatabase();
+                const db = mongoose.connection.db;
+                if (!db) throw new Error("No DB Connection");
 
                 for (const { alert, currentPrice } of triggeredAlerts) {
                     console.log(`🚀 ALERT FIRED: ${alert.symbol} is ${currentPrice} (${alert.condition} ${alert.targetPrice})`);
 
-                    // Mark triggered
-                    await Alert.findByIdAndUpdate(alert._id, { triggered: true, active: false });
+                    // Per-alert try/catch: a failure leaves the alert active so the next 5-min run retries it,
+                    // and never throws the step (a step retry would re-email alerts already sent in this loop).
+                    try {
+                        // Better Auth users may be keyed by `id` or `_id` (see getWatchlistSymbolsByEmail)
+                        const user = await db.collection('user').findOne<{ email?: string }>(
+                            mongoose.isValidObjectId(alert.userId)
+                                ? { $or: [{ id: alert.userId }, { _id: new mongoose.Types.ObjectId(alert.userId) }] }
+                                : { id: alert.userId }
+                        );
+
+                        if (user?.email) {
+                            const result = await sendStockAlertEmail({
+                                email: user.email,
+                                symbol: alert.symbol,
+                                currentPrice,
+                                targetPrice: alert.targetPrice,
+                                condition: alert.condition,
+                            });
+                            // Email not configured: keep the alert active so it fires once email works
+                            if (result.status === 'skipped') continue;
+                        } else {
+                            console.warn(`⚠️ No email for user ${alert.userId}; closing alert ${alert._id} without notifying`);
+                        }
+
+                        await Alert.findByIdAndUpdate(alert._id, { triggered: true, active: false });
+                    } catch (error) {
+                        console.error(`❌ Failed to process alert ${alert._id} (${alert.symbol}); will retry next run`, error);
+                    }
                 }
             });
         }

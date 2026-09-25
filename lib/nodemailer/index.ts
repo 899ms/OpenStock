@@ -1,5 +1,11 @@
 import nodemailer from 'nodemailer';
-import { WELCOME_EMAIL_TEMPLATE, NEWS_SUMMARY_EMAIL_TEMPLATE } from "@/lib/nodemailer/templates";
+import {
+    WELCOME_EMAIL_TEMPLATE,
+    NEWS_SUMMARY_EMAIL_TEMPLATE,
+    STOCK_ALERT_UPPER_EMAIL_TEMPLATE,
+    STOCK_ALERT_LOWER_EMAIL_TEMPLATE,
+} from "@/lib/nodemailer/templates";
+import { formatPrice } from "@/lib/utils";
 
 type EmailSendResult =
     | { status: 'skipped' }
@@ -89,6 +95,41 @@ export const sendNewsSummaryEmail = async (
         return { status: 'sent', messageId: info.messageId } satisfies EmailSendResult;
     } catch (error) {
         console.error('❌ Failed to send news summary email:', error);
+        throw error;
+    }
+};
+
+export const sendStockAlertEmail = async (
+    { email, symbol, currentPrice, targetPrice, condition }:
+    { email: string; symbol: string; currentPrice: number; targetPrice: number; condition: 'ABOVE' | 'BELOW' }
+) => {
+    try {
+        if (!transporter) {
+            console.warn('⚠️ Stock alert email skipped: email credentials are not configured.');
+            return { status: 'skipped' } satisfies EmailSendResult;
+        }
+
+        const isUpper = condition === 'ABOVE';
+        const htmlTemplate = (isUpper ? STOCK_ALERT_UPPER_EMAIL_TEMPLATE : STOCK_ALERT_LOWER_EMAIL_TEMPLATE)
+            .replaceAll('{{symbol}}', symbol)
+            .replaceAll('{{company}}', '') // Alerts don't store the company name
+            .replaceAll('{{currentPrice}}', formatPrice(currentPrice))
+            .replaceAll('{{targetPrice}}', formatPrice(targetPrice))
+            .replaceAll('{{timestamp}}', new Date().toUTCString());
+
+        const mailOptions = {
+            from: `"Openstock" <${process.env.NODEMAILER_EMAIL}>`,
+            to: email,
+            subject: `🔔 Price Alert: ${symbol} is ${isUpper ? 'above' : 'below'} ${formatPrice(targetPrice)}`,
+            text: `${symbol} is now ${formatPrice(currentPrice)}, ${isUpper ? 'above' : 'below'} your target of ${formatPrice(targetPrice)}.`,
+            html: htmlTemplate,
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+        console.log('✅ Stock alert email sent successfully:', info.messageId);
+        return { status: 'sent', messageId: info.messageId } satisfies EmailSendResult;
+    } catch (error) {
+        console.error('❌ Failed to send stock alert email:', error);
         throw error;
     }
 };
