@@ -1,15 +1,10 @@
-import Link from "next/link";
-import { LineChart } from "lucide-react";
-import ChangePill from "@/components/ChangePill";
+import PulseTile from "@/components/PulseTile";
 import TradingViewWidget from "@/components/TradingViewWidget";
 import { getLiveQuotes } from "@/lib/actions/finnhub.actions";
 import { singleQuoteConfig } from "@/lib/constants";
 import { getMarket, type Market } from "@/lib/markets";
 
 const SINGLE_QUOTE = 'https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js';
-
-const formatAmount = (value: number) =>
-    value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: value < 1 ? 4 : 2 });
 
 // Four headline tiles for a market. Markets Finnhub can price get native tiles from our shared quote cache;
 // the rest use TradingView's quote tile, which is free for those exchanges.
@@ -27,32 +22,7 @@ export default async function IndexPulse({ market = getMarket('us') }: { market?
                         </div>
                     );
                 }
-                const quote = quotes[tile.finnhub];
-                const isCrypto = tile.finnhub.startsWith('BINANCE:');
-                return (
-                    <Link key={tile.symbol} href={`/stocks/${encodeURIComponent(tile.finnhub)}`} className="bento-tile transition-colors hover:bg-hover/60">
-                        <div className="bento-head">
-                            <span className="bento-ico"><LineChart /></span>
-                            <span className="truncate">{tile.label}</span>
-                            <span className="mono ml-auto text-xs text-faint">{tile.finnhub.replace('BINANCE:', '')}</span>
-                        </div>
-                        <p className="bento-value">
-                            {quote?.c ? (
-                                isCrypto ? <>{formatAmount(quote.c)}<small> USDT</small></> : <><small>$</small>{formatAmount(quote.c)}</>
-                            ) : '—'}
-                        </p>
-                        <div className="bento-foot">
-                            {quote?.c ? (
-                                <>
-                                    <ChangePill value={quote.dp} />
-                                    <span className="num truncate">{(quote.d ?? 0) > 0 ? '+' : ''}{formatAmount(quote.d ?? 0)} vs prev close</span>
-                                </>
-                            ) : (
-                                <span>Quote unavailable</span>
-                            )}
-                        </div>
-                    </Link>
-                );
+                return <PulseTile key={tile.symbol} symbol={tile.finnhub} label={tile.label} initial={quotes[tile.finnhub]} />;
             })}
         </div>
     );

@@ -34,6 +34,7 @@ const requiredVars = {
 
     // Inngest (Background jobs, cron, AI)
     'INNGEST_SIGNING_KEY': 'Inngest signing key (required for Vercel deployment; get from Inngest dashboard)',
+    'INNGEST_EVENT_KEY': 'Inngest event key (required in production: sign-up sends the welcome-email event with it)',
 
 };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { BellRing, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteAlert } from "@/lib/actions/alert.actions";
@@ -24,6 +25,7 @@ const statusOf = (alert: AlertRow) => {
 };
 
 export default function AlertsPanel({ alerts }: { alerts: AlertRow[] }) {
+    const router = useRouter();
     const [pendingId, setPendingId] = useState<string | null>(null);
 
     const handleDelete = async (alert: AlertRow) => {
@@ -31,6 +33,7 @@ export default function AlertsPanel({ alerts }: { alerts: AlertRow[] }) {
         try {
             await deleteAlert(alert._id);
             toast.success(`Alert for ${alert.symbol} removed`);
+            router.refresh();
         } catch {
             toast.error("Couldn’t remove the alert");
         } finally {

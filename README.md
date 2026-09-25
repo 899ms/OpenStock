@@ -284,6 +284,8 @@ GEMINI_API_KEY=your_gemini_api_key
 # Inngest Signing Key (required for Vercel deployment)
 # Get this from your Inngest dashboard: https://app.inngest.com/env/settings/keys
 INNGEST_SIGNING_KEY=your_inngest_signing_key
+# Required in production so sign-up can send the welcome-email event
+INNGEST_EVENT_KEY=your_inngest_event_key
 
 # Market data (optional)
 # Several free Finnhub keys, rotated per request: each adds 60 requests/min.
@@ -293,10 +295,11 @@ INNGEST_SIGNING_KEY=your_inngest_signing_key
 
 # Social sign-in (optional; each provider is hidden server-side until set)
 # Callback URLs: <BETTER_AUTH_URL>/api/auth/callback/google and /api/auth/callback/github
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
+# Leave these commented out until you have real credentials: any value turns the provider on
+# GOOGLE_CLIENT_ID=your_google_client_id
+# GOOGLE_CLIENT_SECRET=your_google_client_secret
+# GITHUB_CLIENT_ID=your_github_client_id
+# GITHUB_CLIENT_SECRET=your_github_client_secret
 
 # Email (optional; Nodemailer via Gmail, consider App Passwords if 2FA)
 # NODEMAILER_EMAIL=youraddress@gmail.com
@@ -338,6 +341,8 @@ GEMINI_API_KEY=your_gemini_api_key
 # Inngest Signing Key (required for Vercel deployment)
 # Get this from your Inngest dashboard: https://app.inngest.com/env/settings/keys
 INNGEST_SIGNING_KEY=your_inngest_signing_key
+# Required in production so sign-up can send the welcome-email event
+INNGEST_EVENT_KEY=your_inngest_event_key
 
 # Market data (optional)
 # Several free Finnhub keys, rotated per request: each adds 60 requests/min.
@@ -347,10 +352,11 @@ INNGEST_SIGNING_KEY=your_inngest_signing_key
 
 # Social sign-in (optional; each provider is hidden server-side until set)
 # Callback URLs: <BETTER_AUTH_URL>/api/auth/callback/google and /api/auth/callback/github
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
+# Leave these commented out until you have real credentials: any value turns the provider on
+# GOOGLE_CLIENT_ID=your_google_client_id
+# GOOGLE_CLIENT_SECRET=your_google_client_secret
+# GITHUB_CLIENT_ID=your_github_client_id
+# GITHUB_CLIENT_SECRET=your_github_client_secret
 
 # Email (optional; Nodemailer via Gmail, consider App Passwords if 2FA)
 # NODEMAILER_EMAIL=youraddress@gmail.com

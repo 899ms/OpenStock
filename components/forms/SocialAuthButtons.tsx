@@ -36,13 +36,18 @@ const SocialAuthButtons = () => {
 
     const onClick = async (provider: 'google' | 'github') => {
         setPending(provider);
-        const result = await signInWithSocial(provider);
-        if (result.success && result.url) {
-            window.location.href = result.url;
-            return;
+        try {
+            const result = await signInWithSocial(provider);
+            if (result.success && result.url) {
+                window.location.href = result.url;
+                return;
+            }
+            toast.error('Sign in failed', { description: result.error });
+        } catch {
+            // Network failure or a stale action after a deploy
+            toast.error('Sign in failed', { description: 'Check your connection and try again.' });
         }
         setPending(null);
-        toast.error('Sign in failed', { description: result.error });
     }
 
     if (providers.length === 0) return null;

@@ -30,6 +30,8 @@ const OpenSlot = ({ tier }: { tier: string }) => (
 );
 
 export default function SponsorsBand() {
+    // Only Company and Partner tiers include a footer logo (see the placements on /sponsor)
+    const logoSponsors = ACTIVE_SPONSORS.filter((s) => s.tier === 'company' || s.tier === 'partner');
     const openTiers = SPONSOR_TIERS.filter((t) => t.id === 'company' || t.id === 'partner')
         .filter((t) => !t.slots || ACTIVE_SPONSORS.filter((s) => s.tier === t.id).length < t.slots);
 
@@ -46,7 +48,7 @@ export default function SponsorsBand() {
                         <div className="flex flex-col gap-2">
                             <p className="kicker">Current sponsors</p>
                             <div className="flex flex-wrap gap-2">
-                                {ACTIVE_SPONSORS.map((s) => <SponsorMark key={s.name} sponsor={s} />)}
+                                {logoSponsors.map((s) => <SponsorMark key={s.name} sponsor={s} />)}
                                 {openTiers.map((t) => <OpenSlot key={t.id} tier={t.name} />)}
                             </div>
                         </div>

@@ -35,7 +35,7 @@ const TabBar = ({ onMenu }: { onMenu: () => void }) => {
     const pathname = usePathname();
     const router = useRouter();
     const [tabs, setTabs] = useState(() => withTab(PINNED, pathname));
-    const tabRefs = useRef(new Map<string, HTMLAnchorElement>());
+    const tabRefs = useRef(new Map<string, HTMLDivElement>());
     const [glider, setGlider] = useState<{ x: number; w: number } | null>(null);
 
     // Restore tabs from the last visit (per-browser convenience only)
@@ -90,28 +90,28 @@ const TabBar = ({ onMenu }: { onMenu: () => void }) => {
                     const isStock = path.startsWith('/stocks/');
                     const active = path === pathname;
                     return (
-                        <Link
+                        <div
                             key={path}
-                            href={path}
                             ref={(el) => { if (el) tabRefs.current.set(path, el); else tabRefs.current.delete(path); }}
                             className={cn('tab', active && 'is-active', pinned && 'pr-4')}
-                            aria-current={active ? 'page' : undefined}
                         >
-                            {path === '/dashboard' && <LayoutDashboard />}
-                            {path === '/watchlist' && <Star />}
-                            <span className={cn('tab-label', isStock && 'mono text-[13px]')}>{tabLabel(path)}</span>
+                            {/* Stretched link: the whole tab navigates, while the close button stays a real, focusable button */}
+                            <Link href={path} aria-current={active ? 'page' : undefined} className="flex min-w-0 flex-1 items-center gap-2 before:absolute before:inset-0 before:content-['']">
+                                {path === '/dashboard' && <LayoutDashboard />}
+                                {path === '/watchlist' && <Star />}
+                                <span className={cn('tab-label', isStock && 'mono text-[13px]')}>{tabLabel(path)}</span>
+                            </Link>
                             {!pinned && (
-                                <span
-                                    role="button"
-                                    tabIndex={-1}
+                                <button
+                                    type="button"
                                     aria-label={`Close ${tabLabel(path)}`}
-                                    className="tab-close"
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); closeTab(path); }}
+                                    className="tab-close relative z-10"
+                                    onClick={() => closeTab(path)}
                                 >
                                     <X />
-                                </span>
+                                </button>
                             )}
-                        </Link>
+                        </div>
                     );
                 })}
             </div>

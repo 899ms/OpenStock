@@ -167,7 +167,11 @@ export default async function SponsorPage() {
                     </div>
                 </div>
                 {fundingTotal > 0 && (
-                    <p className="num mt-4 text-muted-foreground">Running OpenStock costs about <b className="text-foreground">${fundingTotal} a month</b>.</p>
+                    <p className="num mt-4 text-muted-foreground">
+                        {FUNDING_USES.every((use) => use.monthly)
+                            ? <>Running OpenStock costs about <b className="text-foreground">${fundingTotal} a month</b>.</>
+                            : <>Known costs so far: <b className="text-foreground">${fundingTotal} a month</b>.</>}
+                    </p>
                 )}
             </section>
 
