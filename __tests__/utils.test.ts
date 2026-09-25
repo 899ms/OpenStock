@@ -46,8 +46,8 @@ describe('formatSymbolForTradingView', () => {
         expect(formatSymbolForTradingView('005930.KS')).toBe('KRX:005930');
     });
 
-    it('maps India NSE (.NS) to NSE prefix', () => {
-        expect(formatSymbolForTradingView('RELIANCE.NS')).toBe('NSE:RELIANCE');
+    it('charts India NSE (.NS) listings on BSE, since NSE is blocked in free TradingView embeds', () => {
+        expect(formatSymbolForTradingView('RELIANCE.NS')).toBe('BSE:RELIANCE');
     });
 
     it('maps India BSE (.BO) to BSE prefix', () => {
