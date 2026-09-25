@@ -54,7 +54,7 @@ export default function AboutPage() {
                             </a>
                         </div>
                         <div className="relative grid aspect-square max-h-[340px] place-items-center rounded-[16px] bg-page shadow-[inset_0_0_0_1px_var(--line)]">
-                            <Image src="/assets/icons/odslogo.svg" alt="Open Dev Society" fill className="object-contain p-16 opacity-90" />
+                            <Image src="/assets/icons/odsLogo.svg" alt="Open Dev Society" fill className="object-contain p-16 opacity-90" />
                         </div>
                     </div>
                 </div>
