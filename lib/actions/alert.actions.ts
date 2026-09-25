@@ -5,6 +5,7 @@ import { Alert } from '@/database/models/alert.model';
 import { revalidatePath } from 'next/cache';
 import { requireUserId } from '@/lib/better-auth/auth';
 import { hasFinnhubQuotes } from '@/lib/markets';
+import { alertsEnabled } from '@/lib/market-data';
 
 // A ticker (AAPL, BRK.B) or a Binance pair. Anything else, including markup, is rejected:
 // the symbol ends up in alert emails.
@@ -18,6 +19,7 @@ export async function createAlert(params: {
     condition: 'ABOVE' | 'BELOW';
 }) {
     const userId = await requireUserId();
+    if (!alertsEnabled) throw new Error('Price alerts are part of OpenStock Cloud');
     const symbol = String(params.symbol ?? '').trim().toUpperCase();
     const targetPrice = Number(params.targetPrice);
     const condition = params.condition;

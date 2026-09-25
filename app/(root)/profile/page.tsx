@@ -7,6 +7,7 @@ import PasswordForm from "@/components/profile/PasswordForm";
 import { auth, getSession } from "@/lib/better-auth/auth";
 import { getUserWatchlist } from "@/lib/actions/watchlist.actions";
 import { getUserAlerts } from "@/lib/actions/alert.actions";
+import { alertsEnabled } from "@/lib/market-data";
 
 export const metadata = { title: 'Profile | OpenStock' };
 
@@ -32,7 +33,7 @@ export default async function ProfilePage() {
 
     const stats = [
         { label: 'Watching', value: watchlist.length, icon: Star },
-        { label: 'Active alerts', value: activeAlerts, icon: Bell },
+        { label: alertsEnabled ? 'Active alerts' : 'Paused alerts', value: activeAlerts, icon: Bell },
         { label: 'Sign-in methods', value: linked.size, icon: ShieldCheck },
     ];
 

@@ -11,7 +11,7 @@ import { DISCORD_URL, GOOD_FIRST_ISSUES_URL, REPO_URL } from "@/lib/constants";
 
 const FEATURES = [
     { icon: CandlestickChart, title: 'Charts that move', body: 'TradingView candles, technicals and financials for any listed company, full screen when you need room.' },
-    { icon: Bell, title: 'Alerts by email', body: 'Set a target above or below the price. We check every five minutes and write when it crosses.' },
+    { icon: Bell, title: 'Alerts by email', body: 'With OpenStock Cloud, set a target above or below the price. We check every five minutes and write when it crosses.' },
     { icon: MessagesSquare, title: 'Sentiment in one read', body: 'Buzz and bullishness from Reddit, X.com, news and Polymarket, side by side for each stock.' },
     { icon: Grid3x3, title: 'The whole market', body: 'Sector heatmap, movers and top stories on one screen before the bell.' },
     { icon: Command, title: 'Find anything with ⌘K', body: 'Search every exchange Finnhub covers and open a stock as a tab, like a browser.' },
@@ -26,12 +26,12 @@ const TIERS = [
     },
     {
         name: 'OpenStock Cloud', price: '$5', per: '/month', tag: 'Coming soon', cadence: 'Every 15 seconds', perHour: 240,
-        body: 'The same app with live quotes, hosted on a pool of market data keys. Nothing to set up.',
+        body: 'The same app with live quotes and email price alerts, hosted on a pool of market data keys. Nothing to set up.',
         cta: { label: 'Get notified on Discord', href: DISCORD_URL },
     },
     {
         name: 'Self-host', price: 'Free', cadence: 'Your call', perHour: 240,
-        body: 'Run it on your own server with your own Finnhub keys, realtime for you and your team.',
+        body: 'Run it on your own server with your own Finnhub keys: realtime quotes and alerts for you and your team.',
         cta: { label: 'Setup guide', href: '#self-host' },
     },
 ];
@@ -80,7 +80,7 @@ export default async function LandingPage() {
                         Markets, minus<br />the paywall.
                     </h1>
                     <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-muted-foreground">
-                        OpenStock is an open-source alternative to expensive market platforms. Track prices, set alerts and dig into
+                        OpenStock is an open-source alternative to expensive market platforms. Track prices, watch the whole market and dig into
                         company insights, built openly, for everyone.
                     </p>
                     <div className="mt-8 flex flex-wrap items-center gap-2">

@@ -46,7 +46,7 @@
 
 # OpenStock
 
-OpenStock is an open-source alternative to expensive market platforms. Track real-time prices, set personalized alerts, and explore detailed company insights — built openly, for everyone, forever free.
+OpenStock is an open-source alternative to expensive market platforms. Track real-time prices, watch the whole market, and explore detailed company insights — built openly, for everyone, forever free.
 
 Note: OpenStock is community-built and not a brokerage. Market data may be delayed based on provider rules and your configuration. Nothing here is financial advice.
 
@@ -290,7 +290,8 @@ INNGEST_EVENT_KEY=your_inngest_event_key
 # Market data (optional)
 # Several free Finnhub keys, rotated per request: each adds 60 requests/min.
 # FINNHUB_API_KEYS=key_one,key_two
-# "cached" (default) refreshes quotes hourly for everyone; "realtime" refreshes every 15s.
+# "cached" (default) refreshes quotes hourly for everyone; "realtime" refreshes every 15s
+# and turns on email price alerts (an OpenStock Cloud feature).
 # NEXT_PUBLIC_OPENSTOCK_DATA_MODE=cached
 
 # Social sign-in (optional; each provider is hidden server-side until set)
@@ -347,7 +348,8 @@ INNGEST_EVENT_KEY=your_inngest_event_key
 # Market data (optional)
 # Several free Finnhub keys, rotated per request: each adds 60 requests/min.
 # FINNHUB_API_KEYS=key_one,key_two
-# "cached" (default) refreshes quotes hourly for everyone; "realtime" refreshes every 15s.
+# "cached" (default) refreshes quotes hourly for everyone; "realtime" refreshes every 15s
+# and turns on email price alerts (an OpenStock Cloud feature).
 # NEXT_PUBLIC_OPENSTOCK_DATA_MODE=cached
 
 # Social sign-in (optional; each provider is hidden server-side until set)

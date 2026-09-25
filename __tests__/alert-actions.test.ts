@@ -7,6 +7,9 @@ const requireUserId = vi.fn();
 vi.mock('@/lib/better-auth/auth', () => ({ requireUserId: () => requireUserId() }));
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
 vi.mock('@/database/mongoose', () => ({ connectToDatabase: vi.fn().mockResolvedValue({}) }));
+// Alerts are an OpenStock Cloud feature; most tests run with it on
+const flags = { alertsEnabled: true };
+vi.mock('@/lib/market-data', () => ({ get alertsEnabled() { return flags.alertsEnabled; } }));
 
 const findOneAndDelete = vi.fn();
 const create = vi.fn();
@@ -47,6 +50,16 @@ describe('alert actions are scoped to the session user', () => {
     it('creates alerts for the session user, ignoring any userId sent by the client', async () => {
         await createAlert({ symbol: 'AAPL', targetPrice: 200, condition: 'ABOVE', userId: 'attacker' } as never);
         expect(create).toHaveBeenCalledWith(expect.objectContaining({ userId: 'user-123', symbol: 'AAPL' }));
+    });
+
+    it('refuses new alerts where Cloud features are off', async () => {
+        flags.alertsEnabled = false;
+        try {
+            await expect(createAlert({ symbol: 'AAPL', targetPrice: 200, condition: 'ABOVE' })).rejects.toThrow('OpenStock Cloud');
+            expect(create).not.toHaveBeenCalled();
+        } finally {
+            flags.alertsEnabled = true;
+        }
     });
 
     it('refuses alerts the checker could never price', async () => {

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const FAQS = [
     {
         question: 'Is OpenStock really free?',
-        answer: 'Yes. We run on sponsors and community contributions. Core features (charts, watchlists, alerts) stay free. OpenStock Cloud, coming soon, adds live quotes for $5 a month.',
+        answer: 'Yes. We run on sponsors and community contributions. Charts, watchlists and research stay free. OpenStock Cloud, coming soon, adds live quotes and email price alerts for $5 a month. Self-hosting includes both.',
     },
     {
         question: 'How do I add a stock to my watchlist?',
@@ -29,7 +29,7 @@ const FAQS = [
     },
     {
         question: 'My alert hasn’t fired.',
-        answer: 'Alerts are checked every five minutes and emailed to your account address when the price crosses your target. Check the alert’s status on the watchlist page.',
+        answer: 'Price alerts are part of OpenStock Cloud (or a self-hosted instance in realtime mode). There they are checked every five minutes and emailed to your account address when the price crosses your target. Check the alert’s status on the watchlist page.',
     },
     {
         question: 'Can I contribute code or designs?',

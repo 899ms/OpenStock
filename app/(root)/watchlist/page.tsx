@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { Plus } from 'lucide-react';
 import { getUserWatchlist } from '@/lib/actions/watchlist.actions';
 import { getUserAlerts } from '@/lib/actions/alert.actions';
+import { alertsEnabled } from '@/lib/market-data';
 import { getNews, getWatchlistData } from '@/lib/actions/finnhub.actions';
 import WatchlistTable from '@/components/watchlist/WatchlistTable';
 import AlertsPanel from '@/components/watchlist/AlertsPanel';
@@ -62,7 +63,7 @@ export default async function WatchlistPage() {
                     </Panel>
                 </div>
 
-                <Panel title="Alerts" sub={`${activeAlerts} active · checked every 5 minutes`} className="self-start">
+                <Panel title="Alerts" sub={alertsEnabled ? `${activeAlerts} active · checked every 5 minutes` : 'An OpenStock Cloud feature'} className="self-start">
                     <AlertsPanel alerts={alerts} />
                 </Panel>
             </div>

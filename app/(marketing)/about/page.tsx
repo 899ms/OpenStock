@@ -11,7 +11,7 @@ export const metadata = {
 };
 
 const PRINCIPLES = [
-    { icon: Globe, title: 'Open access', body: 'No premium tiers for core features. Charts, watchlists and alerts stay free for everyone.' },
+    { icon: Globe, title: 'Open access', body: 'No paywall on the core. Charts, watchlists and research stay free for everyone, and self-hosting unlocks everything.' },
     { icon: Code, title: 'Open source', body: 'Fully transparent codebase. Audit our algorithms, contribute features, and build with us.' },
     { icon: Heart, title: 'Community driven', body: 'Powered by donations and volunteers. We answer to our users, not shareholders.' },
 ];
