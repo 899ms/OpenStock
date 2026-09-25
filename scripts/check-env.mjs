@@ -35,9 +35,6 @@ const requiredVars = {
     // Inngest (Background jobs, cron, AI)
     'INNGEST_SIGNING_KEY': 'Inngest signing key (required for Vercel deployment; get from Inngest dashboard)',
 
-    // Email (Nodemailer via Gmail)
-    'NODEMAILER_EMAIL': 'Gmail address for sending emails',
-    'NODEMAILER_PASSWORD': 'Gmail app password (use App Passwords if 2FA enabled; not your regular password)',
 };
 
 /**
@@ -45,6 +42,10 @@ const requiredVars = {
  * These are checked and reported but won't cause failure.
  */
 const optionalVars = {
+    // Email (Nodemailer via Gmail). Without it the app runs; welcome and news emails are disabled.
+    'NODEMAILER_EMAIL': 'Gmail address for sending emails',
+    'NODEMAILER_PASSWORD': 'Gmail app password (use App Passwords if 2FA enabled; not your regular password)',
+
     // AI Providers (for Inngest workflows)
     'GEMINI_API_KEY': 'Google Gemini API key (for AI-powered welcome emails and news summaries)',
 
