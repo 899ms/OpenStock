@@ -1,7 +1,7 @@
 import { Check, HandCoins, MessageCircle, Minus } from "lucide-react";
 import { getRepoStats, formatCount } from "@/lib/github";
 import { DISCORD_URL, sponsorCheckoutUrl } from "@/lib/constants";
-import { ACTIVE_SPONSORS, SPONSOR_CONTACT_EMAIL, SPONSOR_GOAL, SPONSOR_TIERS, type SponsorTierId } from "@/lib/sponsors";
+import { ACTIVE_SPONSORS, FUNDING_USES, SPONSOR_CONTACT_EMAIL, SPONSOR_GOAL, SPONSOR_RECIPIENT, SPONSOR_TIERS, type SponsorTierId } from "@/lib/sponsors";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
@@ -31,6 +31,7 @@ const FAQ = [
 export default async function SponsorPage() {
     const repo = await getRepoStats();
     const goalPercent = Math.min(100, (SPONSOR_GOAL.current / SPONSOR_GOAL.target) * 100);
+    const fundingTotal = FUNDING_USES.reduce((sum, use) => sum + (use.monthly ?? 0), 0);
 
     return (
         <div className="mx-auto max-w-[1200px] px-5">
@@ -137,6 +138,37 @@ export default async function SponsorPage() {
                         </div>
                     </div>
                 </div>
+            </section>
+
+            <section className="mt-24">
+                <p className="kicker text-brand-ink">Transparency</p>
+                <h2 className="mt-2 text-[28px] font-bold tracking-[-0.04em] md:text-[34px]">Where your money goes.</h2>
+                <p className="mt-3 max-w-2xl text-[16px] text-muted-foreground">
+                    Sponsorships are paid through GitHub Sponsors to {SPONSOR_RECIPIENT.name}{' '}
+                    (<a href={`https://github.com/${SPONSOR_RECIPIENT.handle}`} target="_blank" rel="noreferrer" className="font-semibold text-brand-ink hover:underline">@{SPONSOR_RECIPIENT.handle}</a>),{' '}
+                    {SPONSOR_RECIPIENT.role}, and pay for keeping OpenStock free:
+                </p>
+                <div className="hatch mt-8">
+                    <div className="card row-list">
+                        {FUNDING_USES.map((use, i) => (
+                            <div key={use.label} className="grid gap-1 px-5 py-4 sm:grid-cols-[180px_minmax(0,1fr)_auto] sm:items-center sm:gap-6">
+                                <span className="flex items-center gap-3 font-bold">
+                                    <span className="mono text-[12px] text-faint">{String(i + 1).padStart(2, '0')}</span>
+                                    {use.label}
+                                </span>
+                                <span className="text-muted-foreground">{use.detail}</span>
+                                {fundingTotal > 0 && (
+                                    <span className="num text-right font-semibold">
+                                        {use.monthly ? `$${use.monthly}/mo · ${Math.round((use.monthly / fundingTotal) * 100)}%` : '—'}
+                                    </span>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                {fundingTotal > 0 && (
+                    <p className="num mt-4 text-muted-foreground">Running OpenStock costs about <b className="text-foreground">${fundingTotal} a month</b>.</p>
+                )}
             </section>
 
             <section className="mt-24">

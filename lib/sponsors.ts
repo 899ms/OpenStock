@@ -57,4 +57,17 @@ export const SPONSOR_GOAL = { label: 'monthly sponsors', target: 1000, current: 
 
 export const SPONSOR_CONTACT_EMAIL = 'opendevsociety@gmail.com';
 
+// Who receives sponsorships today (GitHub Sponsors is on the founder's personal account).
+export const SPONSOR_RECIPIENT = { name: 'Ravi Pratap Singh', handle: 'ravixalgorithm', role: 'founder of Open Dev Society' };
+
+// Where sponsorship money goes. Add `monthly` (USD) to a line once the real bill is known;
+// the page then shows amounts and each line's share. Lines without it never show a figure.
+export const FUNDING_USES: { label: string; detail: string; monthly?: number }[] = [
+    { label: 'Hosting', detail: 'Vercel serves the app and site. Our traffic is past the free tier.' },
+    { label: 'Market data', detail: 'Finnhub keys, so quotes stay fast for everyone and OpenStock Cloud can go live.' },
+    { label: 'Database', detail: 'MongoDB Atlas for accounts, watchlists and alerts.' },
+    { label: 'AI and email', detail: 'Gemini for welcome emails and the weekly digest, plus email delivery.' },
+    { label: 'Maintenance', detail: 'Time to review community pull requests, fix bugs and ship features.' },
+];
+
 export const sidebarSponsors = () => ACTIVE_SPONSORS.filter((s) => s.tier === 'partner').slice(0, SIDEBAR_SPONSOR_SLOTS);
