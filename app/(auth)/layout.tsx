@@ -4,12 +4,19 @@ import Image from "next/image";
 import {redirect} from "next/navigation";
 import {getSession} from "@/lib/better-auth/auth";
 import ProductPreview from "@/components/landing/ProductPreview";
+import { SocialProvidersProvider } from "@/components/forms/SocialAuthButtons";
 
 const Layout = async ({ children }: { children : React.ReactNode }) => {
 
     const session = await getSession();
 
     if (session?.user) redirect('/dashboard')
+
+    // Same condition that enables the providers in lib/better-auth/auth.ts
+    const socialProviders = [
+        ...(process.env.GOOGLE_CLIENT_ID ? ['google' as const] : []),
+        ...(process.env.GITHUB_CLIENT_ID ? ['github' as const] : []),
+    ];
     return (
         <main className="auth-layout">
             <section className="auth-left-section scrollbar-hide-default">
@@ -18,7 +25,7 @@ const Layout = async ({ children }: { children : React.ReactNode }) => {
                 </Link>
 
                 <div className="pb-6 lg:pb-8 flex-1">
-                    {children}
+                    <SocialProvidersProvider enabled={socialProviders}>{children}</SocialProvidersProvider>
                 </div>
             </section>
             <section className="auth-right-section">
