@@ -8,6 +8,12 @@ const escapeHtml = (value: string) =>
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
 
+// Better Auth hands us an already-encoded URL (callbackURL=http%3A%2F%2F...).
+// encodeURI would turn those % into %25 and the link fails with INVALID_CALLBACKURL,
+// so only encode characters that are unsafe and leave existing escapes alone.
+const encodeUnsafeUrlChars = (url: string) =>
+    url.replace(/[^A-Za-z0-9\-._~:/?#[\]@!$&'()*+,;=%]/g, encodeURIComponent);
+
 export const sendPasswordResetEmail = async (
     { email, name, resetUrl }: { email: string; name?: string | null; resetUrl: string }
 ) => {
@@ -18,7 +24,7 @@ export const sendPasswordResetEmail = async (
 
         const firstName = name?.trim().split(' ')[0] || 'there';
         const escapedFirstName = escapeHtml(firstName);
-        const escapedResetUrl = escapeHtml(encodeURI(resetUrl));
+        const escapedResetUrl = escapeHtml(encodeUnsafeUrlChars(resetUrl));
         const html = `
             <div style="background:#000;padding:32px;font-family:Arial,sans-serif;color:#fff;">
                 <div style="max-width:560px;margin:0 auto;border:1px solid #333;border-radius:12px;padding:32px;background:#111;">
@@ -44,7 +50,7 @@ export const sendPasswordResetEmail = async (
             from: `"Openstock" <${process.env.NODEMAILER_EMAIL}>`,
             to: email,
             subject: 'Reset your Openstock password',
-            text: `Reset your password: ${encodeURI(resetUrl)}`,
+            text: `Reset your password: ${encodeUnsafeUrlChars(resetUrl)}`,
             html,
         });
 
