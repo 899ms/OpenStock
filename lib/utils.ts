@@ -200,7 +200,7 @@ const FINNHUB_TO_TRADINGVIEW_EXCHANGE: Record<string, string> = {
     '.SW': 'SIX',    // SIX Swiss Exchange
     '.VI': 'VIE',    // Vienna Stock Exchange
     '.WA': 'GPW',    // Warsaw Stock Exchange
-    '.PR': 'PSE',    // Prague Stock Exchange
+    '.PR': 'PSECZ',  // Prague Stock Exchange (TradingView's PSE is the Philippines)
     '.AT': 'ATHEX',  // Athens Stock Exchange
     '.IS': 'BIST',   // Borsa Istanbul
 
@@ -215,6 +215,15 @@ const FINNHUB_TO_TRADINGVIEW_EXCHANGE: Record<string, string> = {
     '.TA': 'TASE',   // Tel Aviv Stock Exchange
     '.JO': 'JSE',    // Johannesburg Stock Exchange
 };
+
+// Exchanges whose candle chart TradingView refuses in free embeds ("This symbol doesn't exist"), each confirmed
+// with two tickers. Financials, technicals and profile still work for them.
+// ponytail: static list, re-test with a real browser user agent if TradingView changes its licensing.
+const CHART_BLOCKED_EXCHANGES = new Set(['TSE', 'HKEX', 'LSE', 'KRX', 'TWSE', 'SGX', 'NZX', 'SET', 'MYX', 'BIST', 'TSXV', 'BMV', 'JSE']);
+
+export const isChartEmbeddable = (tvSymbol: string) => !CHART_BLOCKED_EXCHANGES.has(tvSymbol.split(':')[0]);
+
+export const tradingViewSymbolUrl = (tvSymbol: string) => `https://www.tradingview.com/symbols/${tvSymbol.replace(':', '-')}/`;
 
 // Listed outside the US (has a known exchange suffix like .L, .T, .NS). Class shares such as BRK.B are not.
 export function isInternationalSymbol(symbol: string): boolean {
@@ -233,8 +242,9 @@ export function formatSymbolForTradingView(symbol: string): string {
 
     for (const suffix of suffixes) {
         if (upperSymbol.endsWith(suffix.toUpperCase())) {
-            const ticker = upperSymbol.slice(0, -suffix.length);
             const exchange = FINNHUB_TO_TRADINGVIEW_EXCHANGE[suffix];
+            // Finnhub pads Hong Kong codes (0700.HK); TradingView doesn't (HKEX:700)
+            const ticker = exchange === 'HKEX' ? upperSymbol.slice(0, -suffix.length).replace(/^0+(?=\d)/, '') : upperSymbol.slice(0, -suffix.length);
             return `${exchange}:${ticker}`;
         }
     }

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
     formatSymbolForTradingView,
+    isChartEmbeddable,
     formatMarketCapValue,
     formatChangePercent,
     getChangeColorClass,
@@ -32,7 +33,8 @@ describe('formatSymbolForTradingView', () => {
     });
 
     it('maps Hong Kong (.HK) to HKEX prefix', () => {
-        expect(formatSymbolForTradingView('0700.HK')).toBe('HKEX:0700');
+        // TradingView drops Finnhub's zero padding: HKEX:0700 is an invalid symbol there
+        expect(formatSymbolForTradingView('0700.HK')).toBe('HKEX:700');
     });
 
     it('maps Shanghai (.SS) to SSE prefix', () => {
@@ -220,5 +222,19 @@ describe('calculateNewsDistribution', () => {
     it('returns 1 item per symbol for 4+', () => {
         expect(calculateNewsDistribution(5).itemsPerSymbol).toBe(1);
         expect(calculateNewsDistribution(10).itemsPerSymbol).toBe(1);
+    });
+});
+
+describe('isChartEmbeddable', () => {
+    it('allows exchanges whose candle chart TradingView embeds', () => {
+        for (const s of ['AAPL', 'BINANCE:BTCUSDT', 'BSE:RELIANCE', 'XETR:SAP', 'TSX:SHOP', 'PSECZ:CEZ']) expect(isChartEmbeddable(s)).toBe(true);
+    });
+
+    it('flags exchanges TradingView refuses in free embeds', () => {
+        for (const s of ['TSE:7203', 'HKEX:700', 'LSE:VOD', 'KRX:005930']) expect(isChartEmbeddable(s)).toBe(false);
+    });
+
+    it('maps Prague to PSECZ, not the Philippine PSE', () => {
+        expect(formatSymbolForTradingView('CEZ.PR')).toBe('PSECZ:CEZ');
     });
 });

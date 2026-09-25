@@ -11,15 +11,16 @@ What OpenStock can show depends on two free data sources. This table was tested 
 | 🇦🇺 Australia (ASX) | Delayed | No |
 | 🇮🇳 India, through BSE (`.BO`; `.NS` symbols are charted on BSE) | End of day | No |
 | 🇩🇪 Germany (Xetra) | End of day | No |
-| India NSE, London (LSE), Tokyo (TSE), Hong Kong (HKEX) | Blocked in embeds | No |
+| India NSE (charted on BSE instead) | Blocked in embeds | No |
+| London, Tokyo, Hong Kong, Korea, Taiwan, Singapore, New Zealand, Thailand, Malaysia, Istanbul, TSX Venture, Mexico, Johannesburg | Candle chart blocked; financials, technicals and profile work | No |
 | Index tickers such as NIFTY, FTSE 100, DAX, Nikkei 225, Hang Seng | Blocked in embeds | No |
 
 ## What that means in the app
 
 - **Dashboard:** pick a market (US, India, Germany, Canada, Australia, Crypto, Forex). US and crypto tiles use our own cached quotes; the others use TradingView quote tiles.
 - **Stock pages:** symbols Finnhub can price get the full header (live price, day range, market cap). Others get TradingView's quote panel.
-- **Alerts:** US stocks and crypto only, because the alert checker needs a quote source it can call every five minutes.
-- **Search:** Finnhub search returns listings worldwide; blocked exchanges will show TradingView's "only available on TradingView" message in charts.
+- **Alerts:** an OpenStock Cloud feature (or self-hosted in realtime mode). US stocks and crypto only, because the alert checker needs a quote source it can call every five minutes.
+- **Search:** Finnhub search returns listings worldwide. On exchanges whose chart is blocked, the stock page links to the chart on TradingView instead (the list is `CHART_BLOCKED_EXCHANGES` in `lib/utils.ts`, each confirmed with two tickers).
 
 ## Adding a market
 

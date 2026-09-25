@@ -1,7 +1,8 @@
 // Markets OpenStock can show for free. Coverage was tested against the free data sources:
 //   - Finnhub free: US stocks and crypto only (every other exchange returns 403).
 //   - TradingView embeds: US, crypto, forex live; TSX + ASX delayed; BSE + XETRA end-of-day.
-//     NSE, LSE, Tokyo, Hong Kong and TVC indices (NIFTY, FTSE, DAX, N225, HSI) are blocked in embeds.
+//     NSE and TVC indices (NIFTY, FTSE, DAX, N225, HSI) are blocked in embeds; LSE, Tokyo, Hong Kong and
+//     others block only the candle chart (see CHART_BLOCKED_EXCHANGES in lib/utils.ts).
 // Adding a market = adding an entry here with symbols from an exchange that renders in embeds.
 
 import { isInternationalSymbol } from "@/lib/utils";
