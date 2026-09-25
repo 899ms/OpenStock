@@ -1,0 +1,56 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Server actions are public endpoints: these tests pin that alerts are always scoped to the
+// signed-in user, never to an id sent by the client. Adapted from #93.
+
+const requireUserId = vi.fn();
+vi.mock('@/lib/better-auth/auth', () => ({ requireUserId: () => requireUserId() }));
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
+vi.mock('@/database/mongoose', () => ({ connectToDatabase: vi.fn().mockResolvedValue({}) }));
+
+const findOneAndDelete = vi.fn();
+const create = vi.fn();
+vi.mock('@/database/models/alert.model', () => ({
+    Alert: {
+        findOneAndDelete: (...args: unknown[]) => findOneAndDelete(...args),
+        create: (...args: unknown[]) => create(...args),
+    },
+}));
+
+import { createAlert, deleteAlert } from '@/lib/actions/alert.actions';
+
+describe('alert actions are scoped to the session user', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        requireUserId.mockResolvedValue('user-123');
+        findOneAndDelete.mockResolvedValue({ _id: 'alert-1', userId: 'user-123' });
+        create.mockImplementation(async (doc: unknown) => doc);
+    });
+
+    it('deletes the user’s own alert', async () => {
+        await expect(deleteAlert('alert-1')).resolves.toEqual({ success: true });
+        expect(findOneAndDelete).toHaveBeenCalledWith({ _id: 'alert-1', userId: 'user-123' });
+    });
+
+    it('rejects signed-out calls before touching the database', async () => {
+        requireUserId.mockRejectedValue(new Error('Unauthorized'));
+        await expect(deleteAlert('alert-1')).rejects.toThrow('Unauthorized');
+        expect(findOneAndDelete).not.toHaveBeenCalled();
+    });
+
+    it('cannot delete another user’s alert: the query always carries the session user', async () => {
+        findOneAndDelete.mockResolvedValue(null); // someone else's alert matches nothing
+        await deleteAlert('alert-of-someone-else');
+        expect(findOneAndDelete).toHaveBeenCalledWith({ _id: 'alert-of-someone-else', userId: 'user-123' });
+    });
+
+    it('creates alerts for the session user, ignoring any userId sent by the client', async () => {
+        await createAlert({ symbol: 'AAPL', targetPrice: 200, condition: 'ABOVE', userId: 'attacker' } as never);
+        expect(create).toHaveBeenCalledWith(expect.objectContaining({ userId: 'user-123', symbol: 'AAPL' }));
+    });
+
+    it('refuses alerts the checker could never price', async () => {
+        await expect(createAlert({ symbol: 'RELIANCE.NS', targetPrice: 1000, condition: 'ABOVE' })).rejects.toThrow('US stocks and crypto');
+        expect(create).not.toHaveBeenCalled();
+    });
+});

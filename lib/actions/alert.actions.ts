@@ -61,17 +61,3 @@ export async function deleteAlert(alertId: string) {
         throw new Error('Failed to delete alert');
     }
 }
-
-// Toggle alert active status (optional utility)
-export async function toggleAlert(alertId: string, active: boolean) {
-    const userId = await requireUserId();
-    try {
-        await connectToDatabase();
-        await Alert.findOneAndUpdate({ _id: alertId, userId }, { active });
-        revalidatePath('/watchlist');
-        return { success: true };
-    } catch (error) {
-        console.error('Error toggling alert:', error);
-        throw new Error('Failed to update alert');
-    }
-}
