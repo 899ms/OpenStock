@@ -284,6 +284,19 @@ GEMINI_API_KEY=your_gemini_api_key
 # Get this from your Inngest dashboard: https://app.inngest.com/env/settings/keys
 INNGEST_SIGNING_KEY=your_inngest_signing_key
 
+# Market data (optional)
+# Several free Finnhub keys, rotated per request: each adds 60 requests/min.
+# FINNHUB_API_KEYS=key_one,key_two
+# "cached" (default) refreshes quotes hourly for everyone; "realtime" refreshes every 15s.
+# NEXT_PUBLIC_OPENSTOCK_DATA_MODE=cached
+
+# Social sign-in (optional; each provider is hidden server-side until set)
+# Callback URLs: <BETTER_AUTH_URL>/api/auth/callback/google and /api/auth/callback/github
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+
 # Email (Nodemailer via Gmail; consider App Passwords if 2FA)
 NODEMAILER_EMAIL=youraddress@gmail.com
 NODEMAILER_PASSWORD=your_gmail_app_password
@@ -324,6 +337,19 @@ GEMINI_API_KEY=your_gemini_api_key
 # Inngest Signing Key (required for Vercel deployment)
 # Get this from your Inngest dashboard: https://app.inngest.com/env/settings/keys
 INNGEST_SIGNING_KEY=your_inngest_signing_key
+
+# Market data (optional)
+# Several free Finnhub keys, rotated per request: each adds 60 requests/min.
+# FINNHUB_API_KEYS=key_one,key_two
+# "cached" (default) refreshes quotes hourly for everyone; "realtime" refreshes every 15s.
+# NEXT_PUBLIC_OPENSTOCK_DATA_MODE=cached
+
+# Social sign-in (optional; each provider is hidden server-side until set)
+# Callback URLs: <BETTER_AUTH_URL>/api/auth/callback/google and /api/auth/callback/github
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
 
 # Email (Nodemailer via Gmail; consider App Passwords if 2FA)
 NODEMAILER_EMAIL=youraddress@gmail.com
@@ -482,13 +508,16 @@ OpenStock is and will remain free and open for everyone. This project is license
 
 
 
-## ❤️ Partners & Backers
+## ❤️ Sponsors
 
-<a href="https://www.siray.ai/">
-  <img src="public/assets/icons/siray.svg" alt="Siray.ai Logo" width="100" />
-</a>
+OpenStock is open for sponsors. It stays free because people and companies back it, and sponsors are shown on the website, in the app and here. See the tiers on the `/sponsor` page of the site, or [talk with us](mailto:opendevsociety@gmail.com) about a custom partnership.
 
-**[Siray.ai](https://www.siray.ai/)** — The robust AI infrastructure backing OpenStock. Siray.ai ensures our market insights never sleep.
+- **Sponsor:** [GitHub Sponsors](https://github.com/sponsors/ravixalgorithm), monthly tiers from $5 or one-time
+- **Contribute:** pick a [good first issue](https://github.com/Open-Dev-Society/OpenStock/issues?q=is%3Aopen+label%3A%22good+first+issue%22)
+- **Spread the word:** star the repo and share it
+
+**Current sponsors:** your logo here.
+**Previously backed by:** [Siray.ai](https://www.siray.ai/) (2026)
 
 ## Special thanks
 Huge thanks to [Adrian Hajdin (JavaScript Mastery)](https://github.com/adrianhajdin) — his excellent Stock Market App tutorial was instrumental in building OpenStock for the open-source community under the Open Dev Society.
