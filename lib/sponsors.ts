@@ -12,6 +12,9 @@ export type Sponsor = {
 
 export type SponsorTierId = 'backer' | 'supporter' | 'company' | 'partner';
 
+// Registered accounts on the hosted app (13K+ as of September 2026). Update from the user collection count.
+export const REGISTERED_USERS = '13,000+';
+
 // Partners share the app sidebar; the Partner tier sells exactly this many slots.
 export const SIDEBAR_SPONSOR_SLOTS = 3;
 
@@ -42,7 +45,7 @@ export const SPONSOR_TIERS: {
     {
         id: 'partner', name: 'Partner', monthly: 500, slots: SIDEBAR_SPONSOR_SLOTS,
         blurb: 'The most visible spots in OpenStock, limited to three.',
-        perks: ['Everything in Company', 'One of three sponsor slots in the app sidebar, seen by every signed-in user', 'Logo on the landing page'],
+        perks: ['Everything in Company', `One of three sponsor slots in the app sidebar, seen by ${REGISTERED_USERS} registered users`, 'Logo on the landing page'],
     },
 ];
 

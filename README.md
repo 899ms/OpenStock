@@ -48,6 +48,8 @@
 
 OpenStock is an open-source alternative to expensive market platforms. Track real-time prices, watch the whole market, and explore detailed company insights — built openly, for everyone, forever free.
 
+> ❤️ **13,000+ people use OpenStock for free.** Help keep it that way: [sponsor from $5 a month](https://github.com/sponsors/ravixalgorithm/sponsorships?frequency=recurring&amount=5), or read [how OpenStock is funded](#sponsors).
+
 Note: OpenStock is community-built and not a brokerage. Market data may be delayed based on provider rules and your configuration. Nothing here is financial advice.
 
 ## 📋 Table of Contents
@@ -67,6 +69,7 @@ Note: OpenStock is community-built and not a brokerage. Market data may be delay
 13. 🛡️ [Security](#security)
 14. 📜 [License](#license)
 15. 🙏 [Acknowledgements](#acknowledgements)
+16. ❤️ [Sponsor OpenStock](#sponsors)
 
 ## ✨ Introduction <a name="introduction"></a>
 
@@ -518,13 +521,29 @@ OpenStock is and will remain free and open for everyone. This project is license
 
 
 
-## ❤️ Sponsors
+## ❤️ Sponsor OpenStock <a name="sponsors"></a>
 
-OpenStock is open for sponsors. It stays free because people and companies back it, and sponsors are shown on the website, in the app and here. See the tiers on the `/sponsor` page of the site, or [talk with us](mailto:opendevsociety@gmail.com) about a custom partnership.
+OpenStock is free, open source and used by **13,000+ registered people**. Keeping it that way costs money every month: hosting, the database, market data keys, AI and email, and the hours that go into reviewing pull requests and shipping fixes.
 
-- **Sponsor:** [GitHub Sponsors](https://github.com/sponsors/ravixalgorithm), monthly tiers from $5 or one-time
-- **Contribute:** pick a [good first issue](https://github.com/Open-Dev-Society/OpenStock/issues?q=is%3Aopen+label%3A%22good+first+issue%22)
-- **Spread the word:** star the repo and share it
+**How OpenStock is funded**
+
+- **OpenStock Cloud will pay for hosting.** Cloud ($5 a month, coming soon) adds live quotes and email price alerts. Its subscribers will cover the servers, database and market data the hosted app needs, so the free site stays online without depending on donations.
+- **Sponsors keep the community moving.** Sponsorships pay for the time behind OpenStock: reviewing community pull requests, fixing bugs and shipping features at the pace 13,000+ people expect, with the core free for everyone. Self-hosting stays free, with every feature.
+
+**Pick a tier.** Each link opens GitHub Sponsors with the amount already selected. Cancel any time.
+
+| Tier | Monthly | What you get |
+|---|---|---|
+| [Backer](https://github.com/sponsors/ravixalgorithm/sponsorships?frequency=recurring&amount=5) | $5 | Your name in this README |
+| [Supporter](https://github.com/sponsors/ravixalgorithm/sponsorships?frequency=recurring&amount=25) | $25 | Name and avatar on the sponsor wall and the sponsor page |
+| [Company](https://github.com/sponsors/ravixalgorithm/sponsorships?frequency=recurring&amount=100) | $100 | Your logo in the footer of every public page, in this README and on the sponsor page |
+| [Partner](https://github.com/sponsors/ravixalgorithm/sponsorships?frequency=recurring&amount=500) | $500 | One of three sponsor slots in the app sidebar, seen by 13,000+ registered users, plus your logo on the landing page |
+
+Rather give once? [Make a one-time gift](https://github.com/sponsors/ravixalgorithm/sponsorships?frequency=one-time). Want an invoice or a custom partnership? [Talk with us](mailto:opendevsociety@gmail.com?subject=Sponsoring%20OpenStock). Everything, including where the money goes, is on the [sponsor page](https://openstock-ods.vercel.app/sponsor).
+
+Sponsorships are paid through GitHub Sponsors to [@ravixalgorithm](https://github.com/ravixalgorithm) (Ravi Pratap Singh, founder of Open Dev Society).
+
+Can't sponsor right now? Pick a [good first issue](https://github.com/Open-Dev-Society/OpenStock/issues?q=is%3Aopen+label%3A%22good+first+issue%22), star the repo, or share OpenStock with someone who pays too much for a terminal.
 
 **Current sponsors:** your logo here.
 **Previously backed by:** [Siray.ai](https://www.siray.ai/) (2026)

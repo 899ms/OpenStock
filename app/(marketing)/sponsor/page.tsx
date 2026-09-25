@@ -1,7 +1,8 @@
-import { Check, HandCoins, MessageCircle, Minus } from "lucide-react";
+import { Check, Cloud, HandCoins, MessageCircle, Minus, Users } from "lucide-react";
+import IconCard from "@/components/marketing/IconCard";
 import { getRepoStats, formatCount } from "@/lib/github";
 import { DISCORD_URL, sponsorCheckoutUrl } from "@/lib/constants";
-import { ACTIVE_SPONSORS, FUNDING_USES, SPONSOR_CONTACT_EMAIL, SPONSOR_GOAL, SPONSOR_RECIPIENT, SPONSOR_TIERS, type SponsorTierId } from "@/lib/sponsors";
+import { ACTIVE_SPONSORS, FUNDING_USES, REGISTERED_USERS, SPONSOR_CONTACT_EMAIL, SPONSOR_GOAL, SPONSOR_RECIPIENT, SPONSOR_TIERS, type SponsorTierId } from "@/lib/sponsors";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
@@ -40,7 +41,7 @@ export default async function SponsorPage() {
                     <p className="kicker flex items-center gap-2 text-brand-ink"><span className="live-dot" /> Open for sponsors</p>
                     <h1 className="mt-4 text-[44px] font-bold leading-[1.02] tracking-[-0.05em] md:text-[64px]">Back free<br />market data.</h1>
                     <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-muted-foreground">
-                        OpenStock is an open-source market terminal{repo ? ` with ${formatCount(repo.stars)} stars on GitHub` : ''}.
+                        OpenStock is an open-source market terminal used by {REGISTERED_USERS} registered people{repo ? `, with ${formatCount(repo.stars)} stars on GitHub` : ''}.
                         Sponsors keep it free and independent for everyone who can’t pay for a terminal.
                     </p>
                     <div className="mt-8 flex flex-wrap gap-2">
@@ -60,8 +61,8 @@ export default async function SponsorPage() {
                             <div className="h-full rounded-full bg-brand" style={{ width: `max(${goalPercent}%, 6px)` }} />
                         </div>
                         {repo && (
-                            <dl className="grid grid-cols-2 gap-2">
-                                {[['Stars', formatCount(repo.stars)], ['Forks', formatCount(repo.forks)]].map(([label, value]) => (
+                            <dl className="grid grid-cols-3 gap-2">
+                                {[['Users', REGISTERED_USERS.replace(',000', 'K')], ['Stars', formatCount(repo.stars)], ['Forks', formatCount(repo.forks)]].map(([label, value]) => (
                                     <div key={label} className="rounded-[12px] bg-page px-3.5 py-3 shadow-[inset_0_0_0_1px_var(--line)]">
                                         <dt className="kicker">{label}</dt>
                                         <dd className="bento-value mt-1 text-[22px]">{value}</dd>
@@ -173,6 +174,17 @@ export default async function SponsorPage() {
                             : <>Known costs so far: <b className="text-foreground">${fundingTotal} a month</b>.</>}
                     </p>
                 )}
+
+                <div className="mt-10 grid gap-3 md:grid-cols-2">
+                    <IconCard icon={Cloud} title="OpenStock Cloud will pay for hosting">
+                        Cloud ($5 a month, coming soon) adds live quotes and price alerts. Its subscribers will cover the servers, database and
+                        market data the hosted app needs, so the free site stays online without depending on donations.
+                    </IconCard>
+                    <IconCard icon={Users} title="Sponsors keep the community moving">
+                        Sponsorships pay for the time behind OpenStock: reviewing community pull requests, fixing bugs and shipping features
+                        at the pace {REGISTERED_USERS} people expect, with the core free for everyone.
+                    </IconCard>
+                </div>
             </section>
 
             <section className="mt-24">
