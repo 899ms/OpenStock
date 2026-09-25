@@ -34,10 +34,8 @@ const requiredVars = {
 
     // Inngest (Background jobs, cron, AI)
     'INNGEST_SIGNING_KEY': 'Inngest signing key (required for Vercel deployment; get from Inngest dashboard)',
+    'INNGEST_EVENT_KEY': 'Inngest event key (required in production: sign-up sends the welcome-email event with it)',
 
-    // Email (Nodemailer via Gmail)
-    'NODEMAILER_EMAIL': 'Gmail address for sending emails',
-    'NODEMAILER_PASSWORD': 'Gmail app password (use App Passwords if 2FA enabled; not your regular password)',
 };
 
 /**
@@ -45,6 +43,10 @@ const requiredVars = {
  * These are checked and reported but won't cause failure.
  */
 const optionalVars = {
+    // Email (Nodemailer via Gmail). Without it the app runs; welcome and news emails are disabled.
+    'NODEMAILER_EMAIL': 'Gmail address for sending emails',
+    'NODEMAILER_PASSWORD': 'Gmail app password (use App Passwords if 2FA enabled; not your regular password)',
+
     // AI Providers (for Inngest workflows)
     'GEMINI_API_KEY': 'Google Gemini API key (for AI-powered welcome emails and news summaries)',
 
@@ -58,6 +60,16 @@ const optionalVars = {
     // Kit (ConvertKit) for email broadcasts
     'KIT_API_KEY': 'ConvertKit API key (for news summary broadcasts)',
     'KIT_API_SECRET': 'ConvertKit API secret (for news summary broadcasts)',
+
+    // Market data freshness + key pool
+    'FINNHUB_API_KEYS': 'Comma-separated Finnhub keys, rotated per request (each adds 60 req/min). Falls back to NEXT_PUBLIC_FINNHUB_API_KEY',
+    'NEXT_PUBLIC_OPENSTOCK_DATA_MODE': '"cached" (default: quotes refresh hourly, shared by everyone) or "realtime" (every 15s; OpenStock Cloud / self-hosted)',
+
+    // Social sign-in (Better Auth)
+    'GOOGLE_CLIENT_ID': 'Google OAuth client ID (callback: <BETTER_AUTH_URL>/api/auth/callback/google)',
+    'GOOGLE_CLIENT_SECRET': 'Google OAuth client secret',
+    'GITHUB_CLIENT_ID': 'GitHub OAuth app client ID (callback: <BETTER_AUTH_URL>/api/auth/callback/github)',
+    'GITHUB_CLIENT_SECRET': 'GitHub OAuth app client secret',
 
     // AI Provider selection (defaults to "gemini")
     'AI_PROVIDER': 'AI provider: "gemini" | "minimax" | "siray" (default: "gemini")',

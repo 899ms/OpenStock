@@ -108,10 +108,10 @@ export const getChangeColorClass = (changePercent?: number) => {
     return changePercent > 0 ? 'text-green-500' : 'text-red-500';
 };
 
-export const formatPrice = (price: number) => {
+export const formatPrice = (price: number, currency = 'USD') => {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency,
         minimumFractionDigits: 2,
     }).format(price);
 };
@@ -119,7 +119,11 @@ export const formatPrice = (price: number) => {
 // Alias for consistency
 export const formatCurrency = formatPrice;
 
-export function formatNumber(num: number): string {
+export function formatNumber(num?: number | null): string {
+    // Guard against missing/invalid market caps (Finnhub omits this field for many
+    // symbols, e.g. ETFs). Without this, `num * 1e6` yields NaN and renders "NaN".
+    if (num === undefined || num === null || !Number.isFinite(num)) return 'N/A';
+
     // If number is small (likely already in millions from Finnhub), multiply by 1M to get actual value
     // Typical mega-cap is > 100B. 100B in millions is 100,000.
     // If we assume typical market cap input IS millions:
@@ -173,7 +177,7 @@ const FINNHUB_TO_TRADINGVIEW_EXCHANGE: Record<string, string> = {
     '.AX': 'ASX',    // Australian Securities Exchange
     '.NZ': 'NZX',    // New Zealand
     '.BO': 'BSE',    // Bombay Stock Exchange
-    '.NS': 'NSE',    // National Stock Exchange of India
+    '.NS': 'BSE',    // NSE listing: NSE is blocked in free TradingView embeds, the same ticker renders on BSE
     '.BK': 'SET',    // Stock Exchange of Thailand
     '.JK': 'IDX',    // Indonesia Stock Exchange
     '.KL': 'MYX',    // Bursa Malaysia
@@ -212,6 +216,12 @@ const FINNHUB_TO_TRADINGVIEW_EXCHANGE: Record<string, string> = {
     '.JO': 'JSE',    // Johannesburg Stock Exchange
 };
 
+// Listed outside the US (has a known exchange suffix like .L, .T, .NS). Class shares such as BRK.B are not.
+export function isInternationalSymbol(symbol: string): boolean {
+    const upper = symbol.toUpperCase();
+    return Object.keys(FINNHUB_TO_TRADINGVIEW_EXCHANGE).some((suffix) => upper.endsWith(suffix.toUpperCase()));
+}
+
 export function formatSymbolForTradingView(symbol: string): string {
     if (!symbol) return '';
     const upperSymbol = symbol.toUpperCase();
@@ -231,3 +241,12 @@ export function formatSymbolForTradingView(symbol: string): string {
 
     return upperSymbol;
 }
+
+// For values interpolated into email HTML
+export const escapeHtml = (value: string) =>
+    value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
