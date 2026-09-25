@@ -1,20 +1,20 @@
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
-import {headers} from "next/headers";
 import {redirect} from "next/navigation";
-import {auth} from "@/lib/better-auth/auth";
+import {getSession} from "@/lib/better-auth/auth";
+import ProductPreview from "@/components/landing/ProductPreview";
 
 const Layout = async ({ children }: { children : React.ReactNode }) => {
 
-    const session = await auth.api.getSession({headers: await headers()});
+    const session = await getSession();
 
-    if (session?.user) redirect('/')
+    if (session?.user) redirect('/dashboard')
     return (
         <main className="auth-layout">
             <section className="auth-left-section scrollbar-hide-default">
                 <Link href="/" className="auth-logo flex items-center gap-2">
-                    <Image src="/assets/images/logo.png" alt="Openstock" width={200} height={50}/>
+                    <Image src="/assets/images/logo.png" alt="OpenStock" width={140} height={35} priority />
                 </Link>
 
                 <div className="pb-6 lg:pb-8 flex-1">
@@ -38,8 +38,10 @@ const Layout = async ({ children }: { children : React.ReactNode }) => {
                         </div>
                     </div>
                 </div>
-                <div className="flex-1 relative">
-                    <Image src="/assets/images/dashboard.png" alt="Dashboard Preview" width={1440} height={1150} className="auth-dashboard-preview absolute top-0" />
+                <div className="relative flex-1" aria-hidden>
+                    <div className="auth-dashboard-preview absolute top-0">
+                        <ProductPreview />
+                    </div>
                 </div>
             </section>
 

@@ -137,8 +137,8 @@ export const CountrySelectField = ({
                     <CountrySelect value={field.value} onChange={field.onChange} />
                 )}
             />
-            {error && <p className='text-sm text-red-500'>{error.message}</p>}
-            <p className='text-xs text-gray-500'>
+            {error && <p className='text-[13px] text-down'>{error.message}</p>}
+            <p className='text-[12.5px] text-faint'>
                 Helps us show market data and news relevant to you.
             </p>
         </div>
